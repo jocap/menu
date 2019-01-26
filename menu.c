@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
 				err(1, "reallocarray");
 		}
 		line[strlen(line) - 1] = '\0'; /* remove trailing newline */
-		lines[count] = strdup(line);
+		if ((lines[count] = strdup(line)) == NULL) err(1, "strdup");
 		count++;
 	}
 
