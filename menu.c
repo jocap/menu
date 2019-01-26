@@ -8,11 +8,13 @@ struct binding {
 int main(int argc, char *argv[]) {
 	/* process arguments */
 	struct binding bindings[argc - 1];
-
 	if (argc > 1)
 		for (int i = 1; i < argc; i++) {
 			int n = sscanf(argv[i], "%[^=]=%[^\n]", bindings[i-1].key, bindings[i-1].desc);
-			if (n < 2) goto usage;
+			if (n < 2) {
+				fprintf(stderr, "usage: %s [key=desc]\n", argv[0]);
+				return 1;
+			}
 		}
 
 	/* read items */
@@ -36,9 +38,12 @@ int main(int argc, char *argv[]) {
 		lines[count] = strdup(line);
 		count++;
 	}
-	free(line);
+
 	if (ferror(stdin)) err(1, "getline");
-usage:
-	fprintf(stderr, "usage: %s [key=desc]\n", argv[0]);
-	return 1;
+
+	free(line);
+	free(lines);
+
+	return 0;
+
 }
