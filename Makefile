@@ -1,10 +1,11 @@
 PREFIX = /usr/local
 
-CFLAGS += -Wall -Wextra -pedantic -Wno-missing-braces
+CC ?= cc
+CFLAGS += -Wall -Wextra -pedantic -Wno-missing-braces -std=c99
 LDFLAGS += -lncurses
 
-menu: menu.c
-	cc $(CFLAGS) $(LDFLAGS) -o $@ $<
+menu: menu.c ui.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $>
 
 install: menu
 	cp menu ${PREFIX}/bin/menu
