@@ -1,21 +1,25 @@
 .Dd $Mdocdate$
 .Dt MENU 1
 .Os
+.\" --------------------------------------------------------------------
 .Sh NAME
+.\" --------------------------------------------------------------------
 .Nm menu
 .Nd interactive menus for the terminal
 .\"
 .Sh SYNPOSIS
 .Nm menu
 .Op Ar key=desc ...
-.\"
+.\" --------------------------------------------------------------------
 .Sh DESCRIPTION
+.\" --------------------------------------------------------------------
 The
 .Nm menu
 utility creates an interactive menu in the terminal.
 The menu items are read line by line from the standard input.
 
-In the interactive interface, the user can select items using any
+In the interactive interface, the user can search items by typing directly.
+He can select items with any
 .Ar key
 specified in the arguments to
 .Nm menu .
@@ -29,14 +33,35 @@ the key used to select the item,
 .It
 the selected item.
 .El
-.\"
+.\" --------------------------------------------------------------------
+.Sh OPTIONS
+.\" --------------------------------------------------------------------
+.Bl -tag -width 11n
+.It Ar key=desc
+Assign
+.Ar key
+with the description
+.Ar desc ,
+to be displayed in the user interface.
+Do not assign single letters.
+Instead, use modifiers like
+.Sq C-
+(Control)
+and
+.Sq M-
+(Meta).
+For more information, see
+.Sx KEY SYNTAX .
+.El
+.\" --------------------------------------------------------------------
 .Sh EXAMPLES
+.\" --------------------------------------------------------------------
 Launch shell scripts from a directory:
 .Bd -literal -offset 5n
-ls *.sh | menu e=edit r=run | while read key && read item; do
+ls *.sh | menu M-e=edit M-r=run | while read key && read item; do
 	case $key in
-		(e) $EDITOR "$item"
-		(r) ./"$item"
+		(M-e) $EDITOR "$item" ;;
+		(M-r) ./"$item" ;;
 	esac
 done
 .Ed
@@ -45,28 +70,44 @@ Create an interactive directory browser:
 .Bd -literal -offset 5n
 interactive_cd() {
 	ls "$1" \\
-	| menu return=cd space=browse backspace=up \\
+	| menu Return=cd M-Return=browse Backspace=up \\
 	| while read key && read item; do
 		case $key in
-			(return) cd "$item"
-			(space) interactive_cd "$item"
-			(backspace) interactive_cd "$1"/..
+			(Return) cd "$item" ;;
+			(M-Return) interactive_cd "$item" ;;
+			(Backspace) interactive_cd "$1"/.. ;;
 		esac
 	done
 }
 .Ed
-.\"
+.\" --------------------------------------------------------------------
 .Sh KEY BINDINGS
-.Bl -tag -width 10n
-.It up, k
+.\" --------------------------------------------------------------------
+.Bl -tag -width 11n
+.It up, C-k
 Go one line up
-.It down, j
+.It down, C-j
 Go one line down
-.It escape, h
+.It escape, C-q
 Exit with error (return 1)
 .El
-.\"
+.\" --------------------------------------------------------------------
+.Sh KEY SYNTAX
+.\" --------------------------------------------------------------------
+(Note that all key combinations might not work.)
+.Bl -tag -width 11n
+.It prefix modifiers
+C- (Control), M- (Meta)
+.It lowercase letters
+a, b, c, d, e, f ...
+.It uppercase letters
+A, B, C, D, E, F ...
+.It special keys
+Return, Backspace, Escape, Delete, PageUp, PageDown ...
+.El
+.\" --------------------------------------------------------------------
 .Sh AUTHORS
+.\" --------------------------------------------------------------------
 .Nm menu
 is written by
 .An John Ankarström ,
